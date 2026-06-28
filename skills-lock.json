@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "emil-design-eng": {
+      "source": "emilkowalski/skill",
+      "sourceType": "github",
+      "skillPath": "skills/emil-design-eng/SKILL.md",
+      "computedHash": "8bdf9e4e6de7a4969147bf4828a4ad2c5aacd9fba4b690b250a85e0467ca387d"
+    },
+    "review-animations": {
+      "source": "emilkowalski/skill",
+      "sourceType": "github",
+      "skillPath": "skills/review-animations/SKILL.md",
+      "computedHash": "ca04aaa0a815f05e0910ded8fedbfbdfe0acdec8f52dfbb88277890070d134d4"
+    },
+    "vocabulary": {
+      "source": "index-how/vocabulary",
+      "sourceType": "github",
+      "skillPath": "skills/vocabulary/SKILL.md",
+      "computedHash": "c309c9c62165f03584967b2588abe1e37ea085a90064f794c11ac4b6bc90b4d8"
+    }
+  }
+}

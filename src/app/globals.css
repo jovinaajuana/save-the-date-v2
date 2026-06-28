@@ -1,0 +1,11 @@
+@import "tailwindcss";
+
+body {
+  overflow: hidden;
+  background-color: #f0ebe0;
+  background-image: url("/bg-texture.png");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-blend-mode: multiply;
+}
