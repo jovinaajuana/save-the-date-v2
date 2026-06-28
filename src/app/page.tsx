@@ -19,6 +19,7 @@ export default function SaveTheDate() {
   const prefersReducedMotion = useReducedMotion();
   const [mounted, setMounted] = useState(false);
   const [hasOpened, setHasOpened] = useState(false);
+  const [titleDone, setTitleDone] = useState(false);
   useEffect(() => setMounted(true), []);
 
   const openEnvelope = async () => {
@@ -76,7 +77,29 @@ export default function SaveTheDate() {
   };
 
   return (
-    <main className="w-screen h-svh flex flex-col items-center justify-center select-none">
+    <main className="relative w-screen h-svh flex flex-col items-center justify-center select-none">
+
+      {/* Title — handwriting sweep, floats above envelope without affecting flex centering */}
+      <div
+        className="absolute pointer-events-none"
+        style={{ left: "50%", transform: "translateX(-50%)", bottom: "calc(50% + 215px)" }}
+      >
+        <motion.p
+          className="whitespace-nowrap"
+          style={{
+            fontFamily: "'Atma', cursive",
+            color: "#262E58",
+            fontSize: "44px",
+            padding: "8px 12px 16px",
+          }}
+          initial={{ clipPath: "inset(0 100% 0 0)" }}
+          animate={mounted ? { clipPath: "inset(0 0% 0 0)" } : { clipPath: "inset(0 100% 0 0)" }}
+          transition={{ duration: 1.6, delay: 0.3, ease: [0.2, 0, 0.3, 1] }}
+          onAnimationComplete={() => setTitleDone(true)}
+        >
+          You've got mail!
+        </motion.p>
+      </div>
 
       <motion.div
         className="relative cursor-pointer"
@@ -86,8 +109,8 @@ export default function SaveTheDate() {
           zIndex: isExpanded ? 25 : 1,
         }}
         initial={{ opacity: 0, filter: "blur(16px)" }}
-        animate={!mounted
-          ? { opacity: 0, filter: "blur(16px)" }
+        animate={!mounted || !titleDone
+          ? { opacity: 0, filter: "blur(16px)", x: 0, y: 0, scale: 1, rotate: 0 }
           : isExpanded
             ? { x: "-30vw", y: "40vh", scale: 0.38, rotate: 35, opacity: 1, filter: "blur(0px)" }
             : { x: 0, y: 0, scale: 1, rotate: 0, opacity: 1, filter: "blur(0px)" }
@@ -110,55 +133,63 @@ export default function SaveTheDate() {
         {/* ── Closed envelope ── */}
         <motion.div
           className="absolute inset-0 flex items-end justify-center"
-          animate={{ opacity: isOpen ? 0 : 1 }}
-          transition={{ duration: 0.12, ease: EASE_OUT }}
+          animate={{
+            opacity: isOpen ? 0 : 1,
+            scale: isOpen ? 0.96 : 1,
+            y: isOpen ? -6 : 0,
+          }}
+          transition={{ duration: 0.28, ease: [0.4, 0, 1, 1] }}
           style={{ pointerEvents: isOpen ? "none" : "auto" }}
         >
           <img
             src="/Envelope-closed.png"
             alt="A sealed envelope — tap to open"
-            className="w-full h-auto"
+            className="h-auto"
+            style={{ width: "324px" }}
           />
         </motion.div>
 
         {/* ── Open envelope sandwich ── */}
         <motion.div
-          className="absolute inset-0"
+          className="absolute inset-0 flex items-end justify-center"
           initial={{ opacity: 0 }}
           animate={{ opacity: isOpen ? 1 : 0 }}
-          transition={{ duration: 0.12, ease: EASE_OUT }}
+          transition={{
+            duration: 0.3,
+            delay: isOpen ? 0.1 : 0,
+            ease: [0, 0, 0.2, 1],
+          }}
           style={{ pointerEvents: isOpen ? "auto" : "none" }}
         >
-          <img
-            src="/Evelope-open.png"
-            alt=""
-            className="absolute inset-0 w-full h-full"
-            style={{ objectFit: "fill" }}
-          />
-
-          <motion.div
-            className="absolute top-0 z-[2]"
-            style={{ left: "50%", width: "82%" }}
-            initial={{ x: "-50%", y: "-15%" }}
-            animate={letterControls}
-          >
-            {/* Source letter — visibility (not opacity) so it vanishes instantly
-                with no animation glitch when the overlay takes over. */}
+          <div className="relative" style={{ width: "324px" }}>
             <img
-              ref={letterImgRef}
-              src="/Letter.png"
-              alt="Save the date invitation"
-              className="block w-full h-auto"
-              style={{ visibility: isExpanded || isClosing ? "hidden" : "visible" }}
+              src="/Evelope-open.png"
+              alt=""
+              className="w-full h-auto"
             />
-          </motion.div>
 
-          <img
-            src="/Evelope-open.png"
-            alt=""
-            className="absolute inset-0 w-full h-full z-[3]"
-            style={{ objectFit: "fill", clipPath: "inset(42% 0 0 0)" }}
-          />
+            <motion.div
+              className="absolute top-0 z-[2]"
+              style={{ left: "50%", width: "82%" }}
+              initial={{ x: "-50%", y: "-15%" }}
+              animate={letterControls}
+            >
+              <img
+                ref={letterImgRef}
+                src="/Letter.png"
+                alt="Save the date invitation"
+                className="block w-full h-auto"
+                style={{ visibility: isExpanded || isClosing ? "hidden" : "visible" }}
+              />
+            </motion.div>
+
+            <img
+              src="/Evelope-open.png"
+              alt=""
+              className="absolute inset-0 w-full h-full z-[3]"
+              style={{ objectFit: "fill", clipPath: "inset(42% 0 0 0)" }}
+            />
+          </div>
         </motion.div>
       </motion.div>
 
@@ -167,7 +198,7 @@ export default function SaveTheDate() {
         className="mt-16 text-[24px] tracking-[0.2em] uppercase"
         style={{ color: "rgba(70,55,40,0.5)", fontFamily: "Georgia, serif" }}
         initial={{ opacity: 0, filter: "blur(16px)" }}
-        animate={{ opacity: !mounted || hasOpened ? 0 : 1, filter: !mounted || hasOpened ? "blur(16px)" : "blur(0px)" }}
+        animate={{ opacity: !mounted || !titleDone || hasOpened ? 0 : 1, filter: !mounted || !titleDone || hasOpened ? "blur(16px)" : "blur(0px)" }}
         transition={{ duration: 0.3, opacity: { duration: 1.5, delay: 0.5, ease: [0.23, 1, 0.32, 1] }, filter: { duration: 1.5, delay: 0.5, ease: [0.23, 1, 0.32, 1] } }}
       >
         tap to open
