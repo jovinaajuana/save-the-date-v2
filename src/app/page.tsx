@@ -3,6 +3,7 @@
 import { useRef, useState, useEffect } from "react";
 import { motion, AnimatePresence, useAnimation, useReducedMotion } from "framer-motion";
 
+// Shared easing curve used for overlay transitions
 const EASE_OUT: [number, number, number, number] = [0.23, 1, 0.32, 1];
 const wait = (ms: number) => new Promise<void>(r => setTimeout(r, ms));
 
